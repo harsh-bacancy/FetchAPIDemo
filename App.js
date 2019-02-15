@@ -1,50 +1,66 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- * @lint-ignore-every XPLATJSCOPYRIGHT1
- */
+//import liraries
+import React, { Component } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList, Image } from 'react-native';
 
-import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+// create a component
+class FetchAPIDemo extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoading: true,
+      dataSource: []
+    }
+  }
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android:
-    'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+  componentDidMount() {
+    return fetch('https://pictshare.net/api/geturl.php?url=https://pictshare.net//8n8xib.jpg')
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({ isLoading: false, dataSource: responseJson.url }, function () { });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
 
-type Props = {};
-export default class App extends Component<Props> {
   render() {
+    if (this.state.isLoading) {
+      return (
+        <View style={styles.container}>
+          <ActivityIndicator />
+        </View>
+      );
+    }
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to React Native!</Text>
-        <Text style={styles.instructions}>To get started, edit App.js</Text>
-        <Text style={styles.instructions}>{instructions}</Text>
+      <View>
+        <Text>data Loaded</Text>
+        {/* <FlatList
+          data={this.state.dataSource}
+          renderItem={({ item }) => <Text style={{ fontSize: 20 }}>{item}</Text>}
+          keyExtractor={({ id }) => id}
+        /> */}
+        <Text>{this.state.dataSource}</Text>
+        <View style={{ backgroundColor: 'red', height: 500, width: 400 }}>
+          <Image
+            style={{ height: 100,width: 200 }}
+            source={{ uri: `${this.state.dataSource}` }}
+            resizeMode='cover'
+          />
+        </View>
       </View>
-    );
+    )
   }
 }
 
+// define your styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+    backgroundColor: '#EEE',
   },
 });
+
+//make this component available to the app
+export default FetchAPIDemo;
