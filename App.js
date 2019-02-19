@@ -16,15 +16,20 @@ class FetchAPIDemo extends Component {
   }
 
   handleselect = () => {
+    var photo = {
+      uri: this.state.photo.uri,
+      name: 'photo.jpg',
+      type: 'image/jpeg',
+    }
     console.log('photo url', this.state.photo.uri)
     let data = new FormData();
     const h = {};
     h.Accept = 'application/json';
-    data.append('file', this.state.photo.uri)
-    return fetch('https://pictshare.net/api/upload.php', { method: 'POST', headers: h, body: data })
+    data.append('file', photo)
+    return fetch('https://pictshare.net/api/upload.php', { method: 'POST', headers: 'application/json', body: data })
       .then((response) => response.json())
       .then((responseJson) => {
-        this.setState({ isLoading: false, dataSource: responseJson.status }, function () { });
+        this.setState({ isLoading: false, dataSource: responseJson.url }, function () { });
         console.log('---', this.state.dataSource)
       })
       .catch((error) => {
