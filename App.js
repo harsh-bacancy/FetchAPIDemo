@@ -1,6 +1,6 @@
 //import liraries
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, FlatList, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList, Image, TouchableOpacity, Platform } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
 
 
@@ -16,10 +16,20 @@ class FetchAPIDemo extends Component {
   }
 
   handleselect = () => {
-    var photo = {
-      uri: this.state.photo.uri,
-      name: 'photo.jpg',
-      type: 'image/jpeg',
+    var photo = '';
+    {
+      Platform.OS === 'android' ?
+        photo = {
+          uri: this.state.photo.uri,
+          name: 'photo.jpg',
+          type: 'image/jpeg',
+        }
+        :
+        photo = {
+          uri: this.state.photo.uri,
+          filename: 'photo.jpg',
+          name: 'photo.jpg',
+        }
     }
     console.log('photo url', this.state.photo.uri)
     let data = new FormData();
@@ -29,8 +39,8 @@ class FetchAPIDemo extends Component {
     return fetch('https://pictshare.net/api/upload.php', { method: 'POST', headers: 'application/json', body: data })
       .then((response) => response.json())
       .then((responseJson) => {
-        this.setState({ isLoading: false, dataSource: responseJson.url }, function () { });
-        console.log('---', this.state.dataSource)
+        this.setState({ isLoading: false, dataSource: responseJson }, function () { });
+        console.log('---', this.state.dataSource.url)
       })
       .catch((error) => {
         console.error(error);
@@ -58,40 +68,39 @@ class FetchAPIDemo extends Component {
       );
     }
     return (
-      <View>
-        <TouchableOpacity
-          onPress={this.handleChoosePhoto}
-        >
-          <Text style={{ fontSize: 20, marginHorizontal: 20 }}>select Image</Text>
-        </TouchableOpacity>
-        {photo && <TouchableOpacity
-          onPress={this.handleselect}
-        >
-          <Text style={{ fontSize: 20, marginHorizontal: 20 }}>upload</Text>
-        </TouchableOpacity>}
+      <View style={{ flex: 1,backgroundColor: 'red', alignItems: 'center', justifyContent: 'center' }}>
         {/* <FlatList
           data={this.state.dataSource}
           renderItem={({ item }) => <Text style={{ fontSize: 20 }}>{item}</Text>}
           keyExtractor={({ id }) => id}
         /> */}
-        <Text>{dataSource}</Text>
-        <View style={{ backgroundColor: 'red', height: 500, width: 400 }}>
-          <Image
-            style={{ height: 100, width: 200 }}
-            source={{ uri: `${dataSource}` }}
+        {/* <Text>{dataSource.url}</Text> */}
+        <Image
+            style={{ height: 100, width: 300 }}
+            source={{ uri: `${dataSource.url}` }}
             resizeMode='cover'
           />
+        <View style={{ backgroundColor: '#FFF', height:300, width: 300 }}>
           {photo &&
             <Image
-              style={{ height: 100, width: 200, margin: 30 }}
+              style={{ height: 150 , width: 250, margin: 30 }}
               source={{ uri: photo.uri }}
-              resizeMode='cover'
+              resizeMode='contain'
             />
           }
-
         </View>
-
-
+        <View style={{ flexDirection: 'row' }}>
+          <TouchableOpacity
+            onPress={this.handleChoosePhoto}
+          >
+            <Text style={{ fontSize: 20, marginHorizontal: 20, padding:10 }}>select Image</Text>
+          </TouchableOpacity>
+        </View>
+       {photo && <TouchableOpacity
+          onPress={this.handleselect}
+        >
+          <Text style={{ fontSize: 20, marginHorizontal: 20 }}>upload</Text>
+        </TouchableOpacity>}
       </View>
     )
   }
