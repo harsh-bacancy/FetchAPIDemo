@@ -68,11 +68,11 @@ class FetchAPIDemo extends Component {
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
         {/* Modal start */}
         <Modal
-          visible={!TextInputVisible}
+          visible={TextInputVisible}
           transparent={true}
         >
           <View style={{ flex: 1 }}>
-            <View style={{ flex: 2,backgroundColor:'yellow' }}>
+            <View style={{ flex: 2, }}>
               <TouchableOpacity
               style={{flex:1 ,backgroundColor: 'gray'}}
               ></TouchableOpacity>
